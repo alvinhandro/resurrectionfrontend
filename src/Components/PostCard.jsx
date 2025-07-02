@@ -1,1 +1,0 @@
-// PostCard.jsx - frontend placeholder

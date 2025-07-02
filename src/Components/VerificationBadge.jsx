@@ -1,1 +1,0 @@
-// VerificationBadge.jsx - frontend placeholder
