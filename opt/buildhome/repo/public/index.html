@@ -1,1 +1,113 @@
 
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resurrection - Connect, Share, Rise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html, body {
+        height: 100%;
+        font-family: 'Outfit', sans-serif;
+        background: linear-gradient(135deg, #1d1e2c, #282a36);
+        color: #f0f0f0;
+        overflow: hidden;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 100vh;
+        padding: 20px;
+      }
+
+      .logo {
+        font-size: 3rem;
+        font-weight: 700;
+        background: linear-gradient(45deg, #00ffff, #00ff85);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: glow 2s infinite alternate;
+      }
+
+      @keyframes glow {
+        from {
+          text-shadow: 0 0 10px #00ffff;
+        }
+        to {
+          text-shadow: 0 0 20px #00ff85;
+        }
+      }
+
+      .tagline {
+        margin-top: 10px;
+        font-size: 1.2rem;
+        font-weight: 300;
+        color: #b0b0b0;
+      }
+
+      .cta {
+        margin-top: 40px;
+        font-size: 1.1rem;
+        padding: 15px 30px;
+        background: #00ff85;
+        color: #111;
+        border: none;
+        border-radius: 30px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .cta:hover {
+        background: #00ffaa;
+      }
+
+      #root {
+        display: none;
+      }
+
+      @media (max-width: 600px) {
+        .logo {
+          font-size: 2rem;
+        }
+        .tagline {
+          font-size: 1rem;
+        }
+        .cta {
+          padding: 12px 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">Resurrection</div>
+      <div class="tagline">Where Connections Are Reborn</div>
+      <button class="cta" onclick="enterApp()">Enter the App</button>
+    </div>
+
+    <div id="root"></div>
+
+    <script>
+      function enterApp() {
+        document.querySelector(".container").style.display = "none";
+        document.getElementById("root").style.display = "block";
+      }
+    </script>
+  </body>
+</html>
