@@ -1,0 +1,1 @@
+// LikeButton.jsx - frontend placeholder
