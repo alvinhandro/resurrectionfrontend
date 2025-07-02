@@ -1,0 +1,1 @@
+// FollowButton.jsx - frontend placeholder
