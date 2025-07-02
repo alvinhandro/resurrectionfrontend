@@ -1,113 +1,313 @@
-
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Resurrection - Connect, Share, Rise</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap"
-      rel="stylesheet"
-    />
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Unveiling: An Interactive Exploration with AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Warm Neutrals (Alabaster, Rich Black, Burnt Sienna, Gold) -->
+    <!-- Application Structure Plan: The SPA uses a thematic, non-linear dashboard structure. A sticky top navigation allows users to jump to key themes. The core interaction is an HTML/CSS-based diagram of the statue. A new section, the "Prophetic Significance Explorer," has been added. This feature uses the Gemini API to allow users to input current events and receive an AI-generated analysis based on the book's framework. This deepens engagement by making the content personally relevant and endlessly explorable. -->
+    <!-- Visualization & Content Choices:
+        - Report Info: The 4 empires + final kingdom from Daniel's statue. Goal: Show sequence and duration. Viz/Method: A Chart.js horizontal bar chart is used as a 'Prophetic Timeline' to give an immediate visual overview of the historical sweep. Interaction: Tooltips on hover provide dates. Justification: Condenses pages of text into one clear, comparative graphic. Library: Chart.js.
+        - Report Info: The composition of the statue (Gold, Silver, etc.). Goal: Allow exploration of each kingdom's meaning. Viz/Method: An interactive diagram made of styled HTML divs. Interaction: Clicking a section of the statue displays the corresponding text from the book. Justification: Far more engaging than a list; turns the central metaphor into an interactive centerpiece. Method: HTML/CSS/JS.
+        - Report Info: Key end-times concepts and user-provided current events. Goal: Analyze modern events through the book's prophetic lens. Viz/Method: A Gemini API-powered input form. Interaction: User inputs text, clicks a button, and receives a dynamically generated analysis. Justification: Creates an interactive, endlessly replayable feature that directly applies the book's thesis to the real world. Method: Gemini API (gemini-2.0-flash).
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      html, body {
-        height: 100%;
-        font-family: 'Outfit', sans-serif;
-        background: linear-gradient(135deg, #1d1e2c, #282a36);
-        color: #f0f0f0;
-        overflow: hidden;
-      }
-
-      .container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        height: 100vh;
-        padding: 20px;
-      }
-
-      .logo {
-        font-size: 3rem;
-        font-weight: 700;
-        background: linear-gradient(45deg, #00ffff, #00ff85);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: glow 2s infinite alternate;
-      }
-
-      @keyframes glow {
-        from {
-          text-shadow: 0 0 10px #00ffff;
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #F2E9E4;
+            color: #22223B;
         }
-        to {
-          text-shadow: 0 0 20px #00ff85;
+
+        .nav-active {
+            color: #C9ADA7 !important;
+            font-weight: bold;
         }
-      }
 
-      .tagline {
-        margin-top: 10px;
-        font-size: 1.2rem;
-        font-weight: 300;
-        color: #b0b0b0;
-      }
-
-      .cta {
-        margin-top: 40px;
-        font-size: 1.1rem;
-        padding: 15px 30px;
-        background: #00ff85;
-        color: #111;
-        border: none;
-        border-radius: 30px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.3s;
-      }
-
-      .cta:hover {
-        background: #00ffaa;
-      }
-
-      #root {
-        display: none;
-      }
-
-      @media (max-width: 600px) {
-        .logo {
-          font-size: 2rem;
+        .statue-part {
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            border: 2px solid transparent;
         }
-        .tagline {
-          font-size: 1rem;
+
+        .statue-part:hover,
+        .statue-active {
+            transform: scale(1.05);
+            border-color: #9A8C98;
         }
-        .cta {
-          padding: 12px 24px;
+
+        .content-card {
+            background-color: #FFFFFF;
+            border-left: 5px solid #4A4E69;
         }
-      }
+
+        .tab-btn-active {
+            background-color: #9A8C98;
+            color: #FFFFFF;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 250px;
+            max-height: 300px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 300px;
+                max-height: 350px;
+            }
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4A4E69;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="logo">Resurrection</div>
-      <div class="tagline">Where Connections Are Reborn</div>
-      <button class="cta" onclick="enterApp()">Enter the App</button>
-    </div>
+</head>
 
-    <div id="root"></div>
+<body class="antialiased">
 
-    <script>
-      function enterApp() {
-        document.querySelector(".container").style.display = "none";
-        document.getElementById("root").style.display = "block";
-      }
-    </script>
-  </body>
-</html>
+    <!-- Header -->
+    <header class="text-center py-8 px-4 bg-gray-50 shadow-md">
+        <h1 class="text-4xl md:text-5xl font-bold text-[#4A4E69]">The Unveiling</h1>
+        <p class="text-lg md:text-xl mt-2 text-[#9A8C98]">An Interactive Exploration of "Truth, Deception, and the Final
+            Hour"</p>
+        <p class="text-sm mt-1">by Alvin Through Christ</p>
+    </header>
+
+    <!-- Sticky Navigation -->
+    <nav id="navbar" class="sticky top-0 bg-[#22223B] text-white shadow-lg z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-center items-center space-x-4 md:space-x-8 h-16 overflow-x-auto">
+                <a href="#introduction"
+                    class="nav-link text-sm md:text-base whitespace-nowrap px-3 py-2 rounded-md hover:bg-[#4A4E69] transition">Introduction</a>
+                <a href="#statue"
+                    class="nav-link text-sm md:text-base whitespace-nowrap px-3 py-2 rounded-md hover:bg-[#4A4E69] transition">The
+                    Prophetic Statue</a>
+                <a href="#explorer"
+                    class="nav-link text-sm md:text-base whitespace-nowrap px-3 py-2 rounded-md hover:bg-[#4A4E69] transition">✨
+                    AI Explorer</a>
+                <a href="#timeline"
+                    class="nav-link text-sm md:text-base whitespace-nowrap px-3 py-2 rounded-md hover:bg-[#4A4E69] transition">Prophetic
+                    Timeline</a>
+                <a href="#final-kingdom"
+                    class="nav-link text-sm md:text-base whitespace-nowrap px-3 py-2 rounded-md hover:bg-[#4A4E69] transition">The
+                    Final Kingdom</a>
+                <a href="#key-figures"
+                    class="nav-link text-sm md:text-base whitespace-nowrap px-3 py-2 rounded-md hover:bg-[#4A4E69] transition">Key
+                    Figures</a>
+                <a href="#analysis"
+                    class="nav-link text-sm md:text-base whitespace-nowrap px-3 py-2 rounded-md hover:bg-[#4A4E69] transition">Religious
+                    Analysis</a>
+                <a href="#signs"
+                    class="nav-link text-sm md:text-base whitespace-nowrap px-3 py-2 rounded-md hover:bg-[#4A4E69] transition">Signs
+                    of the End</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 md:p-8">
+
+        <!-- Introduction Section -->
+        <section id="introduction" class="my-12 scroll-mt-20">
+            <div class="content-card p-6 md:p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold mb-4 text-[#4A4E69]">The Roaring Torrent</h2>
+                <div class="text-lg space-y-4 text-justify">
+                    <p>This application provides an interactive journey through the core arguments of "The Unveiling."
+                        It is designed to deconstruct the book's complex prophetic narrative into explorable themes. The
+                        central premise, as stated by the author, is that truth is not a "gentle stream, but a mighty,
+                        roaring torrent," and that we are living in a time when long-foretold events are culminating.
+                    </p>
+                    <p>The book asserts that ancient prophecies are a divine blueprint for our present reality. This
+                        exploration will guide you through that blueprint, from the dream of an ancient king to the
+                        author's interpretation of modern headlines, providing context and clarity on its claims about
+                        global powers, key prophetic figures, and the spiritual battle for our age. Use the navigation
+                        above to explore the different facets of this interpretation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Prophetic Statue Section -->
+        <section id="statue" class="my-20 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-[#4A4E69]">Nebuchadnezzar's Prophetic Statue</h2>
+            <p class="text-center mb-8 text-lg text-[#9A8C98]">Click on each part of the statue to reveal its prophetic
+                meaning according to the book.</p>
+            <div class="flex flex-col md:flex-row items-center md:items-start justify-center gap-8">
+                <!-- Statue Visual -->
+                <div class="w-full md:w-1/3 flex flex-col items-center">
+                    <div id="statue-head"
+                        class="statue-part w-24 h-24 bg-yellow-400 rounded-full flex items-center justify-center font-bold text-white shadow-lg mb-1"
+                        data-target="content-head">Head</div>
+                    <div id="statue-chest"
+                        class="statue-part w-40 h-24 bg-gray-400 rounded-md flex items-center justify-center font-bold text-white shadow-lg mb-1"
+                        data-target="content-chest">Chest & Arms</div>
+                    <div id="statue-belly"
+                        class="statue-part w-36 h-20 bg-yellow-600 rounded-md flex items-center justify-center font-bold text-white shadow-lg mb-1"
+                        data-target="content-belly">Belly & Thighs</div>
+                    <div id="statue-legs" class="statue-part flex gap-2 mb-1" data-target="content-legs">
+                        <div
+                            class="w-10 h-32 bg-gray-700 rounded-md flex items-center justify-center font-bold text-white shadow-lg">
+                        </div>
+                        <div
+                            class="w-10 h-32 bg-gray-700 rounded-md flex items-center justify-center font-bold text-white shadow-lg">
+                        </div>
+                    </div>
+                    <div id="statue-feet" class="statue-part flex gap-2" data-target="content-feet">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-r from-gray-700 to-yellow-800 rounded-md flex items-center justify-center font-bold text-white shadow-lg">
+                        </div>
+                        <div
+                            class="w-12 h-12 bg-gradient-to-l from-gray-700 to-yellow-800 rounded-md flex items-center justify-center font-bold text-white shadow-lg">
+                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <p class="font-bold text-gray-700">Legs of Iron</p>
+                        <p class="font-bold text-gray-700">Feet of Iron & Clay</p>
+                    </div>
+                </div>
+                <!-- Content Display -->
+                <div id="statue-content-display" class="w-full md:w-2/3">
+                    <div id="content-default"
+                        class="content-card p-6 rounded-lg shadow-lg min-h-[300px] flex items-center justify-center">
+                        <p class="text-xl text-gray-500">Select a part of the statue to learn more.</p>
+                    </div>
+                    <div id="content-head" class="hidden statue-content content-card p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold mb-3 text-[#C9ADA7]">The Head of Gold: Babylonian Empire</h3>
+                        <p class="text-lg">Daniel declared to Nebuchadnezzar, "You are this head of gold." Babylon (c.
+                            605 - 539 B.C.) was an empire of unparalleled splendor and absolute autocracy. Its wealth
+                            was legendary, its power unquestioned. It represents the beginning of the prophetic timeline
+                            of Gentile world powers.</p>
+                    </div>
+                    <div id="content-chest" class="hidden statue-content content-card p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold mb-3 text-[#C9ADA7]">The Chest & Arms of Silver: Medo-Persian
+                            Empire</h3>
+                        <p class="text-lg">"After you shall arise another kingdom inferior to yours." The dual
+                            Medo-Persian empire (c. 539 - 331 B.C.), represented by two arms, conquered Babylon. While
+                            vast, its less centralized power and reliance on silver currency made it 'inferior' to
+                            Babylon's golden glory.</p>
+                    </div>
+                    <div id="content-belly" class="hidden statue-content content-card p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold mb-3 text-[#C9ADA7]">The Belly & Thighs of Bronze: Greek Empire
+                        </h3>
+                        <p class="text-lg">"A third kingdom of bronze, which shall rule over all the earth." This was
+                            fulfilled by Alexander the Great's Greek empire (c. 331 - 168 B.C.). The superior bronze
+                            weaponry of the Greek phalanx allowed them to conquer the known world with breathtaking
+                            speed.</p>
+                    </div>
+                    <div id="content-legs" class="hidden statue-content content-card p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold mb-3 text-[#C9ADA7]">The Legs of Iron: Roman Empire</h3>
+                        <p class="text-lg">"The fourth kingdom shall be as strong as iron." No empire fits this
+                            description better than Rome (c. 168 B.C. - A.D. 476). Its iron legions, laws, and
+                            engineering crushed all opposition. The two legs symbolize the division of the empire into
+                            West and East (Byzantine).</p>
+                    </div>
+                    <div id="content-feet" class="hidden statue-content content-card p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-bold mb-3 text-[#C9ADA7]">The Feet of Iron & Clay: A Revived Final
+                            Kingdom</h3>
+                        <p class="text-lg">This represents the final form of world government in the last days. It is
+                            not a new empire, but a revived form of the Roman system. It is a confederation of nations
+                            that is partly strong (iron of autocratic power) and partly brittle (clay of
+                            populism/humanity), doomed to shatter.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Explorer Section -->
+        <section id="explorer" class="my-20 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-[#4A4E69]">Prophetic Significance Explorer ✨</h2>
+            <p class="text-center mb-8 text-lg text-[#9A8C98]">Enter a current event or news headline to analyze its
+                potential prophetic meaning through the lens of "The Unveiling".</p>
+            <div class="max-w-3xl mx-auto content-card p-6 md:p-8 rounded-lg shadow-lg">
+                <textarea id="ai-prompt-input" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#9A8C98] focus:outline-none" rows="3" placeholder="e.g., 'A new global digital currency is being proposed by world leaders...'"></textarea>
+                <button id="ai-submit-btn" class="mt-4 w-full bg-[#4A4E69] text-white font-bold py-3 px-4 rounded-md hover:bg-[#22223B] transition-colors flex items-center justify-center">
+                    Analyze with Gemini AI ✨
+                </button>
+                <div id="ai-loader" class="hidden mt-6 flex justify-center">
+                    <div class="loader"></div>
+                </div>
+                <div id="ai-result" class="mt-6 text-lg space-y-4 text-justify"></div>
+            </div>
+        </section>
+
+        <!-- Prophetic Timeline Section -->
+        <section id="timeline" class="my-20 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-[#4A4E69]">Prophetic Timeline of Empires</h2>
+            <p class="text-center mb-8 text-lg text-[#9A8C98]">A visual representation of the duration of the great
+                Gentile empires from Daniel's prophecy.</p>
+            <div class="content-card p-4 md:p-8 rounded-lg shadow-lg">
+                <div class="chart-container">
+                    <canvas id="timelineChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Kingdom Section -->
+        <section id="final-kingdom" class="my-20 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#4A4E69]">The Final Kingdom: Iron & Clay</h2>
+            <div class="content-card p-6 md:p-8 rounded-lg shadow-lg">
+                <p class="text-lg mb-6 text-justify">The book places special emphasis on the feet of the statue,
+                    interpreting them as the final world system we are living in today. This system is an unstable
+                    mixture of two opposing forces that "will not adhere to one another." This section breaks down the
+                    author's interpretation of that mixture.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="p-6 bg-gray-700 text-white rounded-lg shadow-md">
+                        <h3 class="text-2xl font-bold mb-3 text-center border-b-2 border-gray-500 pb-2">The Iron</h3>
+                        <p class="text-center font-semibold mb-3">(Strength & Autocracy)</p>
+                        <ul class="space-y-2 list-disc list-inside">
+                            <li>Represents the legacy of Roman-style autocratic, military, and legal power.</li>
+                            <li>Manifests as the modern push for globalism and centralized control.</li>
+                            <li>Includes unelected global bodies, powerful financial institutions, and pervasive digital
+                                surveillance.</li>
+                            <li>It is the top-down, totalitarian impulse of a ruling elite.</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-yellow-800 bg-opacity-30 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-bold mb-3 text-center border-b-2 border-yellow-800 pb-2">The Clay</h3>
+                        <p class="text-center font-semibold mb-3">(Weakness & Humanity)</p>
+                        <ul class="space-y-2 list-disc list-inside">
+                            <li>Represents the common people, the "seed of men."</li>
+                            <li>Manifests as democracy, populism, and nationalism.</li>
+                            <li>Includes movements like Brexit and other populist uprisings that push back against
+                                global control.</li>
+                            <li>It is the bottom-up desire for individual freedom and national sovereignty.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Figures Section -->
+        <section id="key-figures" class="my-20 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#4A4E69]">Key Figures of the End Times</h2>
+            <div class="w-full max-w-4xl mx-auto">
+                <div class="mb-4 flex justify-center border-b-2 border-gray-300">
+                    <button class="tab-btn py-2 px-6 text-lg font-semibold text-gray-600 focus:outline-none" data-target="tab-antichrist">The Antichrist</button>
+                    <button class="tab-btn py-2 px-6 text-lg font-semibold text-gray-600 focus:outline-none" data-target="tab-false-prophet">The False Prophet</button>
+                </div>
+                <div id="tab-content" class="content-card p-6 md:p-8 rounded-lg shadow-lg">
+                    <div id="tab-antichrist" class="tab-panel">
+                        <h3 class="text-2xl font-bold mb-4">The Prince That Shall Come</h3>
+                        <p class="text-lg">The book identifies the Antichrist not as a mythical figure, but a com
