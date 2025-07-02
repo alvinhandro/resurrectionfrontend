@@ -1,0 +1,1 @@
+// Signup.jsx - frontend placeholder
