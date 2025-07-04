@@ -11,13 +11,6 @@ const Login = () => {
       <div className="absolute w-[400px] h-[400px] bg-blue-500 rounded-full opacity-20 blur-3xl bottom-[-100px] right-[-100px] animate-pulse"></div>
 
 
-const Login = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0f0f] to-[#1a1a2e] text-white relative overflow-hidden">
-      {/* Glowing background shapes */}
-      <div className="absolute w-[500px] h-[500px] bg-pink-600 rounded-full opacity-20 blur-3xl top-[-100px] left-[-100px] animate-pulse"></div>
-      <div className="absolute w-[400px] h-[400px] bg-blue-500 rounded-full opacity-20 blur-3xl bottom-[-100px] right-[-100px] animate-pulse"></div>
-
       {/* Glassmorphism Card */}
       <div className="z-10 backdrop-blur-xl bg-white/5 border border-white/20 rounded-3xl p-10 shadow-[0_0_40px_#00fff7] w-[90%] max-w-md transform transition-all hover:scale-[1.02] hover:shadow-[0_0_60px_#00fff7] duration-300 ease-in-out">
         <h2 className="text-3xl font-bold text-center mb-6 neon-text">
