@@ -1,4 +1,15 @@
 import React from "react";
+import { motion } from "framer-motion";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook, FaXTwitter } from "react-icons/fa6";
+
+const Login = () => {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0f0f] to-[#1a1a2e] text-white relative overflow-hidden">
+      {/* Background blur effects */}
+      <div className="absolute w-[500px] h-[500px] bg-pink-600 rounded-full opacity-20 blur-3xl top-[-100px] left-[-100px] animate-pulse"></div>
+      <div className="absolute w-[400px] h-[400px] bg-blue-500 rounded-full opacity-20 blur-3xl bottom-[-100px] right-[-100px] animate-pulse"></div>
+
 
 const Login = () => {
   return (
